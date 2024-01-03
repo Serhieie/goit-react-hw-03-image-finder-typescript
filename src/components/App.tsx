@@ -87,7 +87,7 @@ export class App extends Component<{}, AppState> {
   //Fetching images by form submission
   fetchImages = async (value: string) => {
     try {
-      const { page, pagination } = this.state;
+      const { pagination } = this.state;
       this.setState({
         error: false,
         isLoading: true,
