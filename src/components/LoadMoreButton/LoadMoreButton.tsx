@@ -1,6 +1,7 @@
-import PropTypes from 'prop-types';
+import { FC } from 'react';
+import { LoadMoreButtonProps } from './LoadMoreButton.types';
 
-export const LoadMoreButton = ({ onClick, error }) => {
+export const LoadMoreButton: FC<LoadMoreButtonProps> = ({ onClick, error }) => {
   return (
     //if error I decided to hide the button
     !error && (
@@ -16,9 +17,4 @@ export const LoadMoreButton = ({ onClick, error }) => {
       </button>
     )
   );
-};
-
-LoadMoreButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  error: PropTypes.bool,
 };

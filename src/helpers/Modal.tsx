@@ -1,25 +1,31 @@
-import React, { Component } from 'react';
+import { Component, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import PropTypes from 'prop-types';
+
+interface ModalProps {
+  onClose: () => void;
+  children: ReactNode;
+}
 
 const modalRoot = document.querySelector('#modal__root');
 
-export default class Modal extends Component {
-  componentDidMount() {
+export default class Modal extends Component<ModalProps> {
+  componentDidMount(): void {
     window.addEventListener('keydown', this.handelKeydown);
   }
 
-  componentWillUnmount = () => {
+  componentWillUnmount = (): void => {
     window.removeEventListener('keydown', this.handelKeydown);
   };
 
-  handelKeydown = evt => {
+  handelKeydown = (evt: KeyboardEvent): void => {
     if (evt.code === 'Escape') {
       return this.props.onClose();
     }
   };
 
-  handleBackdropClick = evt => {
+  handleBackdropClick = (
+    evt: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ): void => {
     if (evt.currentTarget === evt.target) {
       return this.props.onClose();
     }
@@ -35,11 +41,7 @@ export default class Modal extends Component {
           {this.props.children}
         </div>
       </div>,
-      modalRoot
+      modalRoot as Element
     );
   }
 }
-
-Modal.propTypes = {
-  onClose: PropTypes.func,
-};

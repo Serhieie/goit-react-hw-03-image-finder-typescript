@@ -1,7 +1,7 @@
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
-import PropTypes from 'prop-types';
+import { ImageGalleryProps } from './ImageGalery.types';
 
-export const ImageGalery = ({ images }) => {
+export const ImageGalery: React.FC<ImageGalleryProps> = ({ images }) => {
   return (
     <div>
       {/* If images state is empty we are hidding ul and showing h1 title */}
@@ -39,14 +39,4 @@ export const ImageGalery = ({ images }) => {
       </h1>
     </div>
   );
-};
-
-ImageGalery.propTypes = {
-  images: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      webformatURL: PropTypes.string,
-      largeImageURL: PropTypes.string.isRequired,
-    })
-  ).isRequired,
 };

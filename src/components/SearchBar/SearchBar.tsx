@@ -1,7 +1,8 @@
+import { FC } from 'react';
 import { SearchForm } from 'components/SearchForm/SearchForm';
-import PropTypes from 'prop-types';
+import { SearchBarProps } from './SearchBar.types';
 
-export const SearchBar = ({ onSearch }) => {
+export const SearchBar: FC<SearchBarProps> = ({ onSearch }) => {
   return (
     <header
       className="sticky top-0 left-0 z-[10] flex 
@@ -11,8 +12,4 @@ export const SearchBar = ({ onSearch }) => {
       <SearchForm onSearch={onSearch} />
     </header>
   );
-};
-
-SearchBar.propTypes = {
-  onSearch: PropTypes.func.isRequired,
 };

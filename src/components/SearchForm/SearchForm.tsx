@@ -2,9 +2,10 @@ import { IoSearch } from 'react-icons/io5';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { warnTostCall, toastCallError } from '../../helpers/toast';
 import { searchSchema } from 'helpers/searchSchema';
+import { SearchFormProps } from './SearchForm.types';
 
-export const SearchForm = ({ onSearch }) => {
-  const handleSubmit = async (values, actions) => {
+export const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
+  const handleSubmit = async (values: { search: string }, actions: any) => {
     if (!values.search.trim()) {
       return warnTostCall();
     }

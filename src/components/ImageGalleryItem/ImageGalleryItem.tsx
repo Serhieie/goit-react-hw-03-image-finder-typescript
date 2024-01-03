@@ -1,23 +1,29 @@
 import Modal from 'helpers/Modal';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
+import {
+  GaleryItemProps,
+  ImageGalleryItemState,
+} from './ImageGaleryItem.types';
 
-export class ImageGalleryItem extends Component {
-  state = {
+export class ImageGalleryItem extends Component<
+  GaleryItemProps,
+  ImageGalleryItemState
+> {
+  state: ImageGalleryItemState = {
     isModalOpen: false,
     isZoomed: false,
   };
 
   //toggle modal function with scroll blocking effect
-  toggleModal = () => {
-    this.setState(({ isModalOpen }) => ({
-      isModalOpen: !isModalOpen,
+  toggleModal = (): void => {
+    this.setState(prevState => ({
+      isModalOpen: !prevState.isModalOpen,
     }));
     this.scrollBlock();
   };
 
   //Imitation of zoom in open modal
-  toggleZoom = evt => {
+  toggleZoom = (evt: React.MouseEvent<HTMLImageElement>): void => {
     const { isZoomed } = this.state;
     this.setState(prevState => ({
       isZoomed: !prevState.isZoomed,
@@ -34,7 +40,7 @@ export class ImageGalleryItem extends Component {
   };
 
   //block scroll function if modal is open
-  scrollBlock = () => {
+  scrollBlock = (): void => {
     if (!this.state.isModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -71,9 +77,3 @@ export class ImageGalleryItem extends Component {
     );
   }
 }
-
-ImageGalleryItem.propTypes = {
-  id: PropTypes.string,
-  webformatURL: PropTypes.string,
-  largeImageURL: PropTypes.string,
-};

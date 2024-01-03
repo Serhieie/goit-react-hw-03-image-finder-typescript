@@ -13,18 +13,29 @@ import {
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export class App extends Component {
+interface AppState {
+  page: number;
+  isLoading: boolean;
+  images: any[];
+  searchValue: string;
+  pagination: number;
+  heightToMinus: number;
+  error: boolean;
+}
+
+export class App extends Component<{}, AppState> {
   state = {
-    page: null,
+    page: 0,
     isLoading: false,
     images: [],
     searchValue: '',
     pagination: 9,
     heightToMinus: 120,
+    error: false,
   };
 
   //Call scrollBottom function after images loaded by pressing load more button
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: any, prevState: AppState) {
     if (prevState.images !== this.state.images) {
       this.scrollBottom();
     }
@@ -74,7 +85,7 @@ export class App extends Component {
   };
 
   //Fetching images by form submission
-  fetchImages = async value => {
+  fetchImages = async (value: string) => {
     try {
       const { page, pagination } = this.state;
       this.setState({
@@ -82,21 +93,20 @@ export class App extends Component {
         isLoading: true,
         searchValue: value,
         images: [],
+        page: 1,
       });
-      const images = await API.getImgs(value, page, pagination);
+      const images = await API.getImgs(value, 1, pagination);
       if (!images.hits.length) {
         this.setState({
           isLoading: false,
-          page: null,
         });
         return toastCallEmpty();
       }
       succesToastCall();
-      this.setState(prevState => ({
+      this.setState({
         images: images.hits,
-        page: prevState.page + 1,
         isLoading: false,
-      }));
+      });
     } catch (error) {
       this.setState({ error: true, isLoading: false });
       toastCallError();
@@ -115,7 +125,7 @@ export class App extends Component {
       if (!images.hits.length) {
         this.setState({
           isLoading: false,
-          page: null,
+          page: 0,
         });
         toastCallEmpty();
       } else {
