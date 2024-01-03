@@ -4,7 +4,7 @@ import { LoadMoreButtonProps } from './LoadMoreButton.types';
 export const LoadMoreButton: FC<LoadMoreButtonProps> = ({ onClick, error }) => {
   return (
     //if error I decided to hide the button
-    !error && (
+    error ? null : (
       <button
         className="py-2 px-4 rounded bg-blue-600 transition-all duration-300
        text-center block text-white border-0 cursor-pointer  font-extralight text-base
