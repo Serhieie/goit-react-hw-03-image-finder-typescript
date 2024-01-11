@@ -44,6 +44,7 @@ export class App extends Component<{}, AppState> {
   //Next three Functions - experiment with pagination
   // bigger screen more images will fetch also calculating
   // how many pixels need to minus for better experience of use
+  // **********************************************************
   componentDidMount() {
     this.handleWindowResize();
     window.addEventListener('resize', this.handleWindowResize);

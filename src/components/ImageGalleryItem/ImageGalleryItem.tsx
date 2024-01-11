@@ -22,6 +22,7 @@ export class ImageGalleryItem extends Component<
     this.scrollBlock();
   };
 
+  //********************************* */
   //Imitation of zoom in open modal
   toggleZoom = (evt: React.MouseEvent<HTMLImageElement>): void => {
     const { isZoomed } = this.state;

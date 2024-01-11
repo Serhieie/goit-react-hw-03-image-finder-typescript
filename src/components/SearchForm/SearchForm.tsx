@@ -29,11 +29,16 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
       {/* One of the Formik flags witch gieaving opportunity to hendle loading time.
       Here its used for blocking submit button to prevent to many fetches */}
       {({ isSubmitting }) => (
-        <Form className="flex items-center w-full max-w-[600px] bg-white rounded overflow-hidden ">
+        <Form
+          className="flex items-center w-full max-w-[600px] bg-white 
+        rounded overflow-hidden "
+        >
           <button
             type="submit"
-            className="flex justify-center items-center w-12 h-12 border-0 opacity-60 outline-none 
-            cursor-pointer transition-opacity duration-300 hover:opacity-100"
+            className="flex justify-center items-center w-12 h-12 
+            border-0 opacity-60 outline-none 
+            cursor-pointer transition-opacity 
+            duration-300 hover:opacity-100"
             disabled={isSubmitting}
           >
             <span className="ml-auto ">
@@ -41,15 +46,19 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
             </span>
           </button>
           <Field
-            className="w-full inline-block font-light text-xl border-0 outline-0 px-6 
-            placeholder:font-extralight placeholder:text-lg placeholder:text-indigo-900 placeholder:opacity-90 text-indigo-900"
+            className="w-full inline-block font-light text-xl 
+            border-0 outline-0 px-6 
+            placeholder:font-extralight placeholder:text-lg
+             placeholder:text-indigo-900 placeholder:opacity-90
+              text-indigo-900"
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
             name="search"
           />
-          {/* part of Formik liberty + Yup validation toogether error message for showing error messages from falidation */}
+          {/* part of Formik liberty + Yup validation toogether error 
+          message for showing error messages from falidation */}
           <ErrorMessage
             name="search"
             component="div"
