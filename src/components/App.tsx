@@ -5,18 +5,18 @@ import { ImageGalery } from './ImageGalery/ImageGalery';
 import { LoadMoreButton } from './LoadMoreButton/LoadMoreButton';
 import * as API from '../services/apiService';
 import {
-  toastCallError,
   succesToastCall,
   toastCallOutOfRange,
   toastCallEmpty,
 } from '../helpers/toast';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { GaleryItemProps } from './ImageGalleryItem/ImageGaleryItem.types';
 
 interface AppState {
   page: number;
   isLoading: boolean;
-  images: any[];
+  images: GaleryItemProps[];
   searchValue: string;
   pagination: number;
   heightToMinus: number;
@@ -36,10 +36,57 @@ export class App extends Component<{}, AppState> {
 
   //Call scrollBottom function after images loaded by pressing load more button
   componentDidUpdate(prevProps: any, prevState: AppState) {
+    if (
+      (prevState.page !== this.state.page ||
+        prevState.searchValue !== this.state.searchValue) &&
+      !this.state.isLoading
+    ) {
+      if (!this.state.page) {
+        this.setState({
+          isLoading: false,
+          page: 0,
+        });
+        return;
+      }
+      this.loadMoreImages();
+    }
     if (prevState.images !== this.state.images) {
       this.scrollBottom();
     }
   }
+
+  //Fetching images by pressing load more button
+  loadMoreImages = async () => {
+    const { page, searchValue, pagination, images } = this.state;
+    this.setState({ isLoading: true });
+    try {
+      const response = await API.getImgs(searchValue, page, pagination);
+      const firstFetch = response.hits;
+      const updatedImages = [...images, ...response.hits];
+      if (!response.hits.length) {
+        this.setState({
+          isLoading: false,
+          page: 0,
+        });
+        toastCallEmpty();
+      } else if (page === 1) {
+        succesToastCall();
+        this.setState({
+          images: firstFetch,
+          isLoading: false,
+        });
+      } else {
+        this.setState({
+          images: updatedImages,
+          isLoading: false,
+        });
+        succesToastCall();
+      }
+    } catch (error) {
+      this.setState({ error: true, isLoading: false });
+      toastCallOutOfRange();
+    }
+  };
 
   //Next three Functions - experiment with pagination
   // bigger screen more images will fetch also calculating
@@ -85,69 +132,27 @@ export class App extends Component<{}, AppState> {
     }
   };
 
-  //Fetching images by form submission
-  fetchImages = async (value: string) => {
-    try {
-      const { pagination } = this.state;
-      this.setState({
-        error: false,
-        isLoading: true,
-        searchValue: value,
-        images: [],
-        page: 1,
-      });
-      const images = await API.getImgs(value, 1, pagination);
-      if (!images.hits.length) {
-        this.setState({
-          isLoading: false,
-        });
-        return toastCallEmpty();
-      }
-      succesToastCall();
-      this.setState({
-        images: images.hits,
-        isLoading: false,
-      });
-    } catch (error) {
-      this.setState({ error: true, isLoading: false });
-      toastCallError();
-    }
+  handleFormChange = (value: string) => {
+    this.setState({
+      searchValue: value,
+      page: 1,
+    });
   };
 
-  //Fetching images by pressing load more button
-  loadMoreImages = async () => {
-    const { page, searchValue, pagination } = this.state;
-    this.setState({ isLoading: true });
-
-    try {
-      const images = await API.getImgs(searchValue, page + 1, pagination);
-      const updatedImages = [...this.state.images, ...images.hits];
-
-      if (!images.hits.length) {
-        this.setState({
-          isLoading: false,
-          page: 0,
-        });
-        toastCallEmpty();
-      } else {
-        this.setState({
-          images: updatedImages,
-          isLoading: false,
-          page: page + 1,
-        });
-        succesToastCall();
-      }
-    } catch (error) {
-      this.setState({ error: true, isLoading: false });
-      toastCallOutOfRange();
+  handleClick = () => {
+    if (this.state.isLoading) {
+      return;
     }
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   render() {
     const { page, isLoading, images, error } = this.state;
     return (
       <>
-        <SearchBar onSearch={this.fetchImages} />
+        <SearchBar onSearch={this.handleFormChange} />
         <ToastContainer />
         <ImageGalery images={images} />
 
@@ -159,7 +164,7 @@ export class App extends Component<{}, AppState> {
         ) : (
           // showing button after form submission ( at form submission we are giving +1 for the page)
           page >= 1 && (
-            <LoadMoreButton onClick={this.loadMoreImages} error={error} />
+            <LoadMoreButton onClick={this.handleClick} error={error} />
           )
         )}
       </>
