@@ -37,9 +37,8 @@ export class App extends Component<{}, AppState> {
   //Call scrollBottom function after images loaded by pressing load more button
   componentDidUpdate(prevProps: any, prevState: AppState) {
     if (
-      (prevState.page !== this.state.page ||
-        prevState.searchValue !== this.state.searchValue) &&
-      !this.state.isLoading
+      prevState.page !== this.state.page ||
+      prevState.searchValue !== this.state.searchValue
     ) {
       if (!this.state.page) {
         this.setState({
@@ -48,7 +47,7 @@ export class App extends Component<{}, AppState> {
         });
         return;
       }
-      this.loadMoreImages();
+      this.loadImages();
     }
     if (prevState.images !== this.state.images) {
       this.scrollBottom();
@@ -56,42 +55,51 @@ export class App extends Component<{}, AppState> {
   }
 
   //Fetching images by pressing load more button
-  loadMoreImages = async () => {
+  loadImages = async () => {
     const { page, searchValue, pagination, images } = this.state;
     this.setState({ isLoading: true });
     try {
       const response = await API.getImgs(searchValue, page, pagination);
-      const firstFetch = response.hits;
       const updatedImages = [...images, ...response.hits];
       if (!response.hits.length) {
         this.setState({
-          isLoading: false,
           page: 0,
         });
         toastCallEmpty();
-      } else if (page === 1) {
-        succesToastCall();
-        this.setState({
-          images: firstFetch,
-          isLoading: false,
-        });
       } else {
         this.setState({
           images: updatedImages,
-          isLoading: false,
         });
         succesToastCall();
       }
     } catch (error) {
-      this.setState({ error: true, isLoading: false });
+      this.setState({ error: true });
       toastCallOutOfRange();
+    } finally {
+      this.setState({
+        isLoading: false,
+      });
     }
+  };
+
+  handleFormChange = (value: string): void => {
+    this.setState({
+      searchValue: value,
+      page: 1,
+    });
+  };
+
+  handleClick = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   //Next three Functions - experiment with pagination
   // bigger screen more images will fetch also calculating
   // how many pixels need to minus for better experience of use
   // **********************************************************
+  //better to check li height
   componentDidMount() {
     this.handleWindowResize();
     window.addEventListener('resize', this.handleWindowResize);
@@ -130,22 +138,6 @@ export class App extends Component<{}, AppState> {
         behavior: 'smooth',
       });
     }
-  };
-
-  handleFormChange = (value: string) => {
-    this.setState({
-      searchValue: value,
-      page: 1,
-    });
-  };
-
-  handleClick = () => {
-    if (this.state.isLoading) {
-      return;
-    }
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
   };
 
   render() {
