@@ -82,8 +82,9 @@ export class App extends Component<{}, AppState> {
     }
   };
 
-  handleFormChange = (value: string): void => {
+  handleSubmit = (value: string): void => {
     this.setState({
+      images: [],
       searchValue: value,
       page: 1,
     });
@@ -144,13 +145,16 @@ export class App extends Component<{}, AppState> {
     const { page, isLoading, images, error } = this.state;
     return (
       <>
-        <SearchBar onSearch={this.handleFormChange} />
+        <SearchBar onSearch={this.handleSubmit} />
         <ToastContainer />
         <ImageGalery images={images} />
 
         {/* Showing loader when loading in state */}
         {isLoading ? (
-          <div className="fixed top-0 left-0 w-full h-full bg-slate-900 bg-opacity-40 flex justify-center items-center z-30">
+          <div
+            className="fixed top-0 left-0 w-full h-full bg-slate-900 
+          bg-opacity-40 flex justify-center items-center z-30"
+          >
             <Loader />
           </div>
         ) : (
